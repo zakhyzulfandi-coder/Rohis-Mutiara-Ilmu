@@ -4,31 +4,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rohis Ikhwah</title>
-    <link
-      rel="icon"
-      href="https://cdn-icons-png.flaticon.com/512/4358/4358667.png"
-    />
+    
+    <link rel="manifest" href="manifest.json" />
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/4358/4358667.png" />
+    <meta name="theme-color" content="#2c3e50" />
+
     <style>
-      html,
-      body {
+      html, body {
         margin: 0;
         padding: 0;
         width: 100%;
         height: 100%;
         background-color: #eee;
-        overflow: hidden; /* Mencegah scroll ganda */
+        overflow: hidden; 
       }
 
       .iframe-container {
         width: 100%;
-        height: 100dvh; /* Menggunakan dvh agar pas di mobile browser */
+        height: 100dvh; 
         overflow: hidden;
       }
 
       iframe {
         display: block;
         width: 100%;
-        height: 100%;
+        /* TRIK MENGHILANGKAN BANNER GOOGLE */
+        height: calc(100% + 36px); 
+        margin-top: -36px; 
         border: none;
       }
     </style>
@@ -46,5 +48,15 @@
       >
       </iframe>
     </div>
+
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js')
+            .then(() => console.log('PWA Ready'))
+            .catch(err => console.log('PWA Error:', err));
+        });
+      }
+    </script>
   </body>
 </html>
