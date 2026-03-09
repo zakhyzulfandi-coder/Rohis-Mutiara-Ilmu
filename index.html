@@ -1,209 +1,343 @@
-<!doctype html>
+```html
+<!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Rohis Ikhwah</title>
-    
-    <link rel="manifest" href="manifest.json" />
-    <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg" />
-    <meta name="theme-color" content="#2c3e50" />
 
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #eee;
-        overflow: hidden; 
-        /* 2. PENGUNCI ZOOM KETUKAN GANDA (Double-tap) */
-        touch-action: manipulation; 
-      }
+<head>
+  <meta charset="UTF-8">
 
-      /* Container Iframe langsung dirender agar loadingnya instan (Tidak pakai display:none) */
-      .iframe-container {
-        width: 100%;
-        height: 100dvh; 
-        overflow: hidden;
-      }
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-      iframe {
-        display: block;
-        width: 100%;
-        height: 100%; 
-        border: none;
-      }
+  <title>Rohis Ikhwah</title>
 
-      /* Layar pemblokir web disembunyikan di awal */
-      #overlay {
-        display: none;
-        position: fixed;
-        top: 0; left: 0;
-        width: 100%; height: 100%;
-        background: rgba(44, 62, 80, 1); /* Dibuat solid agar menutupi sempurna saat di browser */
-        z-index: 999;
-      }
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon"
+        href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
+  <meta name="theme-color" content="#2c3e50">
 
-      #installPopUp {
-        position: absolute; 
-        top: 50%; 
-        left: 50%; 
-        transform: translate(-50%, -50%); 
-        background: #fff; 
-        padding: 30px 25px; 
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-        border-radius: 12px; 
-        text-align: center;
-        width: 80%;
-        max-width: 320px;
-        font-family: sans-serif;
-      }
+  <style>
+    /* ===== LAYOUT DASAR ===== */
 
-      #btnInstall {
-        background: #2c3e50; 
-        color: white; 
-        border: none; 
-        padding: 12px 24px; 
-        border-radius: 6px; 
-        cursor: pointer; 
-        font-weight: bold;
-        font-size: 16px;
-        margin-top: 15px;
-        width: 100%;
-      }
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #eee;
+      overflow: hidden;
+      touch-action: manipulation;
+    }
 
-      #resetLink {
-        margin-top: 20px;
-        font-size: 12px;
-        color: #3498db;
-        cursor: pointer;
-        text-decoration: underline;
-        display: none;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="iframe-container" id="appContainer">
-      <iframe
-        id="app"
-        src="https://script.google.com/a/macros/mutiarailmu.sch.id/s/AKfycbzdTaJFJFNHH_sISxZDEk8nX0W9BAOqcKKYzfkNwY-aNvS-b3YKVed1d82vMGwABwatPg/exec"
-        scrolling="yes"
-        allowfullscreen="true"
-        webkitallowfullscreen="true"
-        mozallowfullscreen="true"
-        allow="fullscreen; camera; microphone; display-capture; geolocation"
-      >
-      </iframe>
+    /* ===== CONTAINER APLIKASI ===== */
+
+    .iframe-container {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    iframe {
+      display: block;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ===== OVERLAY INSTALL ===== */
+
+    #overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(44, 62, 80, 1);
+      z-index: 999;
+    }
+
+    #installPopUp {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #fff;
+      padding: 30px 25px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      border-radius: 12px;
+      text-align: center;
+      width: 80%;
+      max-width: 320px;
+      font-family: sans-serif;
+    }
+
+    #btnInstall {
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: 15px;
+      width: 100%;
+    }
+
+    #resetLink {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #3498db;
+      cursor: pointer;
+      text-decoration: underline;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===== CONTAINER APP ===== -->
+
+  <div class="iframe-container" id="appContainer">
+    <iframe
+      id="app"
+      src="https://script.google.com/a/macros/mutiarailmu.sch.id/s/AKfycbzdTaJFJFNHH_sISxZDEk8nX0W9BAOqcKKYzfkNwY-aNvS-b3YKVed1d82vMGwABwatPg/exec"
+      scrolling="yes"
+      allowfullscreen
+      webkitallowfullscreen
+      mozallowfullscreen
+      allow="fullscreen; camera; microphone; display-capture; geolocation">
+    </iframe>
+  </div>
+
+  <!-- ===== OVERLAY INSTALL ===== -->
+
+  <div id="overlay">
+
+    <div id="installPopUp">
+
+      <p id="popupTitle"
+         style="margin:0 0 10px 0;color:#2c3e50;font-weight:bold;font-size:20px;">
+        Aplikasi Rohis Ikhwah
+      </p>
+
+      <p id="popupDesc"
+         style="margin:0 0 15px 0;color:#555;font-size:14px;line-height:1.5;">
+        Memuat sistem...
+      </p>
+
+      <button id="btnInstall" style="display:none;">
+        Install
+      </button>
+
+      <p id="resetLink">
+        Saya sudah menghapus aplikasi (Install Ulang)
+      </p>
+
     </div>
+  </div>
 
-    <div id="overlay">
-      <div id="installPopUp">
-        <p id="popupTitle" style="margin: 0 0 10px 0; color: #2c3e50; font-weight: bold; font-size: 20px;">Aplikasi Rohis Ikhwah</p>
-        <p id="popupDesc" style="margin: 0 0 15px 0; color: #555; font-size: 14px; line-height: 1.5;">Memuat sistem...</p>
-        <button id="btnInstall" style="display: none;">Install</button>
-        <p id="resetLink">Saya sudah menghapus aplikasi (Install Ulang)</p>
-      </div>
-    </div>
+  <script>
 
-    <script>
-      // 1. Registrasi Service Worker
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('sw.js')
-            .catch(err => console.log('PWA Error:', err));
-        });
-      }
+    /* ===== SERVICE WORKER ===== */
 
-      // Variabel Elemen DOM
-      let deferredPrompt;
-      const overlay = document.getElementById('overlay');
-      const btnInstall = document.getElementById('btnInstall');
-      const popupTitle = document.getElementById('popupTitle');
-      const popupDesc = document.getElementById('popupDesc');
-      const resetLink = document.getElementById('resetLink');
-
-      // 2. Deteksi Lingkungan
-      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-      const isAndroid = /android/i.test(userAgent);
-      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-      const isMobile = isAndroid || isIOS;
-      
-      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
-      const isInstalledFlag = localStorage.getItem('pwa_installed') === 'true';
-
-      // 3. Logika Mode Aplikasi (Cepat tanpa blank)
-      if (isMobile && !isStandalone) {
-        // Jika dibuka via browser HP, tutup layar dengan overlay
-        overlay.style.display = 'block';
-
-        if (isInstalledFlag) {
-          popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
-          popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
-          btnInstall.style.display = 'none';
-          resetLink.style.display = 'block'; 
-        } else {
-          if (isIOS) {
-            popupTitle.innerHTML = 'Install Diperlukan';
-            popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
-            btnInstall.style.display = 'none';
-          } else {
-            popupTitle.innerHTML = 'Install Diperlukan';
-            popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
-            btnInstall.style.display = 'block';
-          }
-        }
-      } else if (isMobile && isStandalone) {
-        // Jika dibuka dari Aplikasi: Ingat status install (Iframe sudah otomatis jalan dari awal)
-        localStorage.setItem('pwa_installed', 'true');
-      }
-
-      // 4. Deteksi Otomatis Jika di Uninstall
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        
-        localStorage.removeItem('pwa_installed');
-        
-        if (!isStandalone) {
-          popupTitle.innerHTML = 'Install Diperlukan';
-          popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
-          btnInstall.style.display = 'block';
-          resetLink.style.display = 'none'; 
-        }
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .catch(err => console.log('PWA Error:', err));
       });
+    }
 
-      // 5. Aksi Tombol Reset Manual
-      resetLink.addEventListener('click', () => {
-        localStorage.removeItem('pwa_installed'); 
-        location.reload(); 
-      });
+    /* ===== DOM ELEMENT ===== */
 
-      // 6. Aksi tombol Install
-      btnInstall.addEventListener('click', async () => {
-        if (!deferredPrompt) {
-          alert('Sistem instalasi sedang disiapkan oleh browser. Harap tunggu beberapa detik lalu klik lagi.');
-          return;
-        }
+    let deferredPrompt;
 
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        
-        if (outcome === 'accepted') {
-          localStorage.setItem('pwa_installed', 'true');
-          popupTitle.innerHTML = 'Instalasi Berhasil';
-          popupDesc.innerHTML = 'Silakan tutup browser ini dan buka aplikasi yang telah di unduh di layar utama Anda.';
-          btnInstall.style.display = 'none';
-        }
-        deferredPrompt = null;
-      });
+    const overlay = document.getElementById('overlay');
+    const btnInstall = document.getElementById('btnInstall');
+    const popupTitle = document.getElementById('popupTitle');
+    const popupDesc = document.getElementById('popupDesc');
+    const resetLink = document.getElementById('resetLink');
 
-      window.addEventListener('appinstalled', () => {
-        localStorage.setItem('pwa_installed', 'true');
-        popupTitle.innerHTML = 'Instalasi Selesai';
-        popupDesc.innerHTML = 'Silakan tutup browser ini dan buka aplikasi yang telah di unduh di layar utama Anda.';
+    /* ===== DETEKSI DEVICE ===== */
+
+    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+    const isAndroid = /android/i.test(userAgent);
+    const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+
+    const isMobile = isAndroid || isIOS;
+
+    const isStandalone =
+      window.matchMedia('(display-mode: standalone)').matches ||
+      window.navigator.standalone === true;
+
+    const isInstalledFlag =
+      localStorage.getItem('pwa_installed') === 'true';
+
+    /* ===== LOGIKA MODE APLIKASI ===== */
+
+    if (isMobile && !isStandalone) {
+
+      overlay.style.display = 'block';
+
+      if (isInstalledFlag) {
+
+        popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
+
+        popupDesc.innerHTML =
+          'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
+
         btnInstall.style.display = 'none';
-      });
-    </script>
-  </body>
+        resetLink.style.display = 'block';
+
+      } else {
+
+        if (isIOS) {
+
+          popupTitle.innerHTML = 'Install Diperlukan';
+
+          popupDesc.innerHTML =
+            'Tekan ikon <b>Share</b> di menu browser lalu pilih <b>Add to Home Screen</b>.';
+
+          btnInstall.style.display = 'none';
+
+        } else {
+
+          popupTitle.innerHTML = 'Install Diperlukan';
+
+          popupDesc.innerHTML =
+            'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
+
+          btnInstall.style.display = 'block';
+
+        }
+
+      }
+
+    }
+
+    else if (isMobile && isStandalone) {
+      localStorage.setItem('pwa_installed', 'true');
+    }
+
+    /* ===== DETEKSI UNINSTALL ===== */
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+
+      e.preventDefault();
+      deferredPrompt = e;
+
+      localStorage.removeItem('pwa_installed');
+
+      if (!isStandalone) {
+
+        popupTitle.innerHTML = 'Install Diperlukan';
+
+        popupDesc.innerHTML =
+          'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
+
+        btnInstall.style.display = 'block';
+        resetLink.style.display = 'none';
+
+      }
+
+    });
+
+    /* ===== RESET INSTALL ===== */
+
+    resetLink.addEventListener('click', () => {
+
+      localStorage.removeItem('pwa_installed');
+      location.reload();
+
+    });
+
+    /* ===== TOMBOL INSTALL ===== */
+
+    btnInstall.addEventListener('click', async () => {
+
+      if (!deferredPrompt) {
+        alert('Sistem instalasi sedang disiapkan browser.');
+        return;
+      }
+
+      deferredPrompt.prompt();
+
+      const { outcome } = await deferredPrompt.userChoice;
+
+      if (outcome === 'accepted') {
+
+        localStorage.setItem('pwa_installed', 'true');
+
+        popupTitle.innerHTML = 'Instalasi Berhasil';
+
+        popupDesc.innerHTML =
+          'Silakan tutup browser dan buka aplikasi dari layar utama.';
+
+        btnInstall.style.display = 'none';
+
+      }
+
+      deferredPrompt = null;
+
+    });
+
+    window.addEventListener('appinstalled', () => {
+
+      localStorage.setItem('pwa_installed', 'true');
+
+      popupTitle.innerHTML = 'Instalasi Selesai';
+
+      popupDesc.innerHTML =
+        'Silakan tutup browser dan buka aplikasi dari layar utama.';
+
+      btnInstall.style.display = 'none';
+
+    });
+
+    /* ===== ANTI ZOOM ===== */
+
+    document.addEventListener('wheel', function (e) {
+      if (e.ctrlKey) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.ctrlKey && (
+        e.key === '+' ||
+        e.key === '-' ||
+        e.key === '=' ||
+        e.key === '0'
+      )) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('gesturestart', function (e) {
+      e.preventDefault();
+    });
+
+    let lastTouchEnd = 0;
+
+    document.addEventListener('touchend', function (event) {
+
+      const now = (new Date()).getTime();
+
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+
+      lastTouchEnd = now;
+
+    }, false);
+
+  </script>
+
+</body>
+
 </html>
+```
