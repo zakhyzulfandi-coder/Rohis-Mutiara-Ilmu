@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rohis Ikhwah</title>
     
     <link rel="manifest" href="manifest.json" />
@@ -17,8 +17,6 @@
         height: 100%;
         background-color: #eee;
         overflow: hidden; 
-        /* MENGUNCI ZOOM GANDA (Double-Tap) di HP */
-        touch-action: manipulation; 
       }
 
       .iframe-container {
@@ -72,6 +70,7 @@
         width: 100%;
       }
 
+      /* Teks kecil tambahan jika user sudah uninstall aplikasinya */
       #resetLink {
         margin-top: 20px;
         font-size: 12px;
@@ -143,11 +142,13 @@
           overlay.style.display = 'block';
 
           if (isInstalledFlag) {
+            // TERBLOKIR: Browser mengira aplikasi masih ada
             popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
             popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
             btnInstall.style.display = 'none';
-            resetLink.style.display = 'block'; 
+            resetLink.style.display = 'block'; // Tampilkan tombol reset untuk berjaga-jaga jika mereka uninstall
           } else {
+            // BELUM MENGINSTAL: Minta Install
             if (isIOS) {
               popupTitle.innerHTML = 'Install Diperlukan';
               popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
@@ -166,20 +167,23 @@
         e.preventDefault();
         deferredPrompt = e;
         
+        // JIKA EVENT INI MUNCUL, ARTINYA APLIKASI PASTI SUDAH DI-UNINSTALL.
+        // Hapus ingatan lama secara otomatis!
         localStorage.removeItem('pwa_installed');
         
+        // Langsung perbaiki tampilan layarnya menjadi mode Install
         if (!isStandalone) {
           popupTitle.innerHTML = 'Install Diperlukan';
           popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
           btnInstall.style.display = 'block';
-          resetLink.style.display = 'none'; 
+          resetLink.style.display = 'none'; // Sembunyikan link reset karena sudah otomatis terdeteksi
         }
       });
 
-      // 5. Aksi Tombol Reset Manual
+      // 5. Aksi Tombol Reset Manual (Bermanfaat untuk iOS)
       resetLink.addEventListener('click', () => {
-        localStorage.removeItem('pwa_installed'); 
-        location.reload(); 
+        localStorage.removeItem('pwa_installed'); // Hapus ingatan browser
+        location.reload(); // Muat ulang halaman agar sistem ngecek ulang
       });
 
       // 6. Aksi tombol Install
