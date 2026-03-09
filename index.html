@@ -17,49 +17,15 @@
         height: 100%;
         background-color: #eee;
         overflow: hidden; 
-        touch-action: manipulation; 
+        touch-action: manipulation; /* Cegah zoom double-tap */
       }
 
+      /* Iframe langsung dirender tanpa disembunyikan agar loading instan */
       .iframe-container {
-        display: none; 
         width: 100%;
         height: 100dvh; 
-        position: relative; /* Penting untuk posisi loader */
         overflow: hidden;
       }
-
-      /* --- CSS UNTUK LOADING SCREEN --- */
-      #appLoader {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: #eee; /* Warna latar belakang loading */
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        z-index: 50; /* Di atas iframe, tapi di bawah overlay pemblokir */
-        font-family: sans-serif;
-      }
-
-      /* Animasi Putar (Spinner) */
-      .spinner {
-        border: 4px solid rgba(44, 62, 80, 0.2);
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        border-left-color: #2c3e50;
-        animation: spin 1s linear infinite;
-        margin-bottom: 15px;
-      }
-
-      @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-      }
-      /* --------------------------------- */
 
       iframe {
         display: block;
@@ -68,12 +34,13 @@
         border: none;
       }
 
+      /* Overlay hanya akan muncul menutupi iframe jika dibuka di browser */
       #overlay {
         display: none;
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: rgba(44, 62, 80, 0.95); 
+        background: rgba(44, 62, 80, 1); /* Warna solid menutupi iframe */
         z-index: 999;
       }
 
@@ -117,12 +84,6 @@
   </head>
   <body>
     <div class="iframe-container" id="appContainer">
-      
-      <div id="appLoader">
-        <div class="spinner"></div>
-        <p style="color: #2c3e50; font-weight: bold; margin: 0;">Memuat Rohis Ikhwah...</p>
-      </div>
-
       <iframe
         id="app"
         src="https://script.google.com/a/macros/mutiarailmu.sch.id/s/AKfycbzdTaJFJFNHH_sISxZDEk8nX0W9BAOqcKKYzfkNwY-aNvS-b3YKVed1d82vMGwABwatPg/exec"
@@ -131,7 +92,6 @@
         webkitallowfullscreen="true"
         mozallowfullscreen="true"
         allow="fullscreen; camera; microphone; display-capture; geolocation"
-        onload="sembunyikanLoader()" 
       >
       </iframe>
     </div>
@@ -146,19 +106,6 @@
     </div>
 
     <script>
-      // Fungsi untuk menyembunyikan loader saat iframe selesai dimuat
-      function sembunyikanLoader() {
-        const loader = document.getElementById('appLoader');
-        if (loader) {
-          // Memberikan sedikit transisi halus (opsional)
-          loader.style.transition = "opacity 0.3s ease";
-          loader.style.opacity = "0";
-          setTimeout(() => {
-            loader.style.display = 'none';
-          }, 300);
-        }
-      }
-
       // 1. Registrasi Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -167,9 +114,7 @@
         });
       }
 
-      // Variabel Elemen DOM
       let deferredPrompt;
-      const appContainer = document.getElementById('appContainer');
       const overlay = document.getElementById('overlay');
       const btnInstall = document.getElementById('btnInstall');
       const popupTitle = document.getElementById('popupTitle');
@@ -185,33 +130,30 @@
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const isInstalledFlag = localStorage.getItem('pwa_installed') === 'true';
 
-      // 3. Logika Mode Aplikasi Ketat
-      if (!isMobile) {
-        appContainer.style.display = 'block';
-      } else {
-        if (isStandalone) {
-          appContainer.style.display = 'block';
-          localStorage.setItem('pwa_installed', 'true');
-        } else {
-          overlay.style.display = 'block';
+      // 3. Logika Pemblokir Cepat
+      if (isMobile && !isStandalone) {
+        // Jika HP dan BUKAN Aplikasi: Langsung tutup layar pakai overlay!
+        overlay.style.display = 'block';
 
-          if (isInstalledFlag) {
-            popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
-            popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
+        if (isInstalledFlag) {
+          popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
+          popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
+          btnInstall.style.display = 'none';
+          resetLink.style.display = 'block'; 
+        } else {
+          if (isIOS) {
+            popupTitle.innerHTML = 'Install Diperlukan';
+            popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
             btnInstall.style.display = 'none';
-            resetLink.style.display = 'block'; 
           } else {
-            if (isIOS) {
-              popupTitle.innerHTML = 'Install Diperlukan';
-              popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
-              btnInstall.style.display = 'none';
-            } else {
-              popupTitle.innerHTML = 'Install Diperlukan';
-              popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
-              btnInstall.style.display = 'block';
-            }
+            popupTitle.innerHTML = 'Install Diperlukan';
+            popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
+            btnInstall.style.display = 'block';
           }
         }
+      } else if (isMobile && isStandalone) {
+        // Jika dibuka dari Aplikasi: Ingat status install
+        localStorage.setItem('pwa_installed', 'true');
       }
 
       // 4. Deteksi Otomatis Jika di Uninstall (KHUSUS ANDROID)
