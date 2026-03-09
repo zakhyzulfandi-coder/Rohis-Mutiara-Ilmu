@@ -28,11 +28,11 @@
       iframe {
         display: block;
         width: 100%;
-        height: 100%; /* Tampilan normal, tidak di-crop */
+        height: 100%; 
         border: none;
       }
 
-      /* CSS Tambahan untuk Pop-up Install agar lebih rapi */
+      /* CSS untuk Pop-up Install */
       #installPopUp {
         display: none; 
         position: fixed; 
@@ -82,48 +82,61 @@
         });
       }
 
-      // 2. Logika Pop-up Install PWA
+      // Variabel Elemen DOM
       let deferredPrompt;
       const installPopUp = document.getElementById('installPopUp');
       const btnInstall = document.getElementById('btnInstall');
       const btnClose = document.getElementById('btnClose');
+      const popupDesc = document.querySelector('#installPopUp p:nth-child(2)');
 
-      // Menangkap event sebelum prompt install muncul
+      // 2. Deteksi Perangkat (Android, iOS, dan mode Standalone/sudah diinstal)
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isAndroid = /android/i.test(userAgent);
+      const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+      const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+      // 3. Logika untuk Android (Menggunakan beforeinstallprompt)
       window.addEventListener('beforeinstallprompt', (e) => {
-        // Cegah prompt bawaan browser muncul otomatis
+        // Cegah prompt bawaan browser
         e.preventDefault();
-        // Simpan event untuk dipicu nanti
+        // Simpan event untuk dipicu saat tombol diklik
         deferredPrompt = e;
-        // Tampilkan pop-up custom kita
-        installPopUp.style.display = 'block';
+        
+        // Hanya tampilkan pop-up jika ini perangkat Android dan belum diinstal
+        if (isAndroid && !isStandalone) {
+          installPopUp.style.display = 'block';
+        }
       });
 
-      // Aksi saat tombol "Install" diklik
+      // Aksi tombol Install (Hanya untuk Android)
       btnInstall.addEventListener('click', async () => {
-        // Sembunyikan pop-up custom
         installPopUp.style.display = 'none';
-        
         if (deferredPrompt) {
-          // Tampilkan prompt bawaan sistem (dialog "Install app?")
           deferredPrompt.prompt();
-          
-          // Tunggu respons user
           const { outcome } = await deferredPrompt.userChoice;
           console.log(`User memilih: ${outcome}`);
-          
-          // Kosongkan variabel
           deferredPrompt = null;
         }
       });
 
-      // Aksi saat tombol "Nanti" diklik
+      // 4. Logika Khusus untuk iOS (Karena Apple memblokir install otomatis)
+      window.addEventListener('load', () => {
+        // Tampilkan hanya jika perangkat iOS dan belum diinstal
+        if (isIOS && !isStandalone) {
+          popupDesc.innerHTML = "Untuk menginstal, tekan ikon <b>Share</b> (Bagikan) di bawah browser Anda, lalu pilih <b>'Add to Home Screen'</b>.";
+          btnInstall.style.display = 'none'; // Sembunyikan tombol install di iOS
+          installPopUp.style.display = 'block';
+        }
+      });
+
+      // 5. Aksi tombol "Nanti" untuk menutup pop-up
       btnClose.addEventListener('click', () => {
         installPopUp.style.display = 'none';
       });
 
-      // Deteksi jika aplikasi berhasil diinstal (misal via menu browser langsung)
+      // 6. Deteksi sukses instalasi agar pop-up hilang
       window.addEventListener('appinstalled', () => {
-        console.log('PWA telah berhasil diinstal!');
+        console.log('PWA berhasil diinstal!');
         installPopUp.style.display = 'none';
         deferredPrompt = null;
       });
