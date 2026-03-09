@@ -1,5 +1,5 @@
 {
-  "name": "LMS Rohis Ikhwah - SMK Mutiara Ilmu",
+  "name": "Rohis Ikwah",
   "short_name": "Rohis Ikhwah",
   "start_url": "/index.html",
   "display": "standalone",
@@ -26,3 +26,4 @@
     }
   ]
 }
+
