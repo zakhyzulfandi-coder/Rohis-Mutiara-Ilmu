@@ -2,7 +2,7 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Rohis Ikhwah</title>
     
     <link rel="manifest" href="manifest.json" />
@@ -17,10 +17,12 @@
         height: 100%;
         background-color: #eee;
         overflow: hidden; 
+        /* 2. PENGUNCI ZOOM KETUKAN GANDA (Double-tap) */
+        touch-action: manipulation; 
       }
 
+      /* Container Iframe langsung dirender agar loadingnya instan (Tidak pakai display:none) */
       .iframe-container {
-        display: none; 
         width: 100%;
         height: 100dvh; 
         overflow: hidden;
@@ -33,12 +35,13 @@
         border: none;
       }
 
+      /* Layar pemblokir web disembunyikan di awal */
       #overlay {
         display: none;
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: rgba(44, 62, 80, 0.95); 
+        background: rgba(44, 62, 80, 1); /* Dibuat solid agar menutupi sempurna saat di browser */
         z-index: 999;
       }
 
@@ -70,7 +73,6 @@
         width: 100%;
       }
 
-      /* Teks kecil tambahan jika user sudah uninstall aplikasinya */
       #resetLink {
         margin-top: 20px;
         font-size: 12px;
@@ -115,7 +117,6 @@
 
       // Variabel Elemen DOM
       let deferredPrompt;
-      const appContainer = document.getElementById('appContainer');
       const overlay = document.getElementById('overlay');
       const btnInstall = document.getElementById('btnInstall');
       const popupTitle = document.getElementById('popupTitle');
@@ -131,59 +132,51 @@
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const isInstalledFlag = localStorage.getItem('pwa_installed') === 'true';
 
-      // 3. Logika Mode Aplikasi Ketat
-      if (!isMobile) {
-        appContainer.style.display = 'block';
-      } else {
-        if (isStandalone) {
-          appContainer.style.display = 'block';
-          localStorage.setItem('pwa_installed', 'true');
-        } else {
-          overlay.style.display = 'block';
+      // 3. Logika Mode Aplikasi (Cepat tanpa blank)
+      if (isMobile && !isStandalone) {
+        // Jika dibuka via browser HP, tutup layar dengan overlay
+        overlay.style.display = 'block';
 
-          if (isInstalledFlag) {
-            // TERBLOKIR: Browser mengira aplikasi masih ada
-            popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
-            popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
+        if (isInstalledFlag) {
+          popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
+          popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
+          btnInstall.style.display = 'none';
+          resetLink.style.display = 'block'; 
+        } else {
+          if (isIOS) {
+            popupTitle.innerHTML = 'Install Diperlukan';
+            popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
             btnInstall.style.display = 'none';
-            resetLink.style.display = 'block'; // Tampilkan tombol reset untuk berjaga-jaga jika mereka uninstall
           } else {
-            // BELUM MENGINSTAL: Minta Install
-            if (isIOS) {
-              popupTitle.innerHTML = 'Install Diperlukan';
-              popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
-              btnInstall.style.display = 'none';
-            } else {
-              popupTitle.innerHTML = 'Install Diperlukan';
-              popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
-              btnInstall.style.display = 'block';
-            }
+            popupTitle.innerHTML = 'Install Diperlukan';
+            popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
+            btnInstall.style.display = 'block';
           }
         }
+      } else if (isMobile && isStandalone) {
+        // Jika dibuka dari Aplikasi: Ingat status install (Iframe sudah otomatis jalan dari awal)
+        localStorage.setItem('pwa_installed', 'true');
       }
 
-      // 4. Deteksi Otomatis Jika di Uninstall (KHUSUS ANDROID)
+      // 4. Deteksi Otomatis Jika di Uninstall
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
         
-        // JIKA EVENT INI MUNCUL, ARTINYA APLIKASI PASTI SUDAH DI-UNINSTALL.
-        // Hapus ingatan lama secara otomatis!
         localStorage.removeItem('pwa_installed');
         
-        // Langsung perbaiki tampilan layarnya menjadi mode Install
         if (!isStandalone) {
           popupTitle.innerHTML = 'Install Diperlukan';
           popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
           btnInstall.style.display = 'block';
-          resetLink.style.display = 'none'; // Sembunyikan link reset karena sudah otomatis terdeteksi
+          resetLink.style.display = 'none'; 
         }
       });
 
-      // 5. Aksi Tombol Reset Manual (Bermanfaat untuk iOS)
+      // 5. Aksi Tombol Reset Manual
       resetLink.addEventListener('click', () => {
-        localStorage.removeItem('pwa_installed'); // Hapus ingatan browser
-        location.reload(); // Muat ulang halaman agar sistem ngecek ulang
+        localStorage.removeItem('pwa_installed'); 
+        location.reload(); 
       });
 
       // 6. Aksi tombol Install
