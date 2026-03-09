@@ -17,11 +17,12 @@
         height: 100%;
         background-color: #eee;
         overflow: hidden; 
-        touch-action: manipulation; /* Cegah zoom double-tap */
+        /* MENGUNCI ZOOM GANDA (Double-Tap) di HP */
+        touch-action: manipulation; 
       }
 
-      /* Iframe langsung dirender tanpa disembunyikan agar loading instan */
       .iframe-container {
+        display: none; 
         width: 100%;
         height: 100dvh; 
         overflow: hidden;
@@ -34,13 +35,12 @@
         border: none;
       }
 
-      /* Overlay hanya akan muncul menutupi iframe jika dibuka di browser */
       #overlay {
         display: none;
         position: fixed;
         top: 0; left: 0;
         width: 100%; height: 100%;
-        background: rgba(44, 62, 80, 1); /* Warna solid menutupi iframe */
+        background: rgba(44, 62, 80, 0.95); 
         z-index: 999;
       }
 
@@ -114,7 +114,9 @@
         });
       }
 
+      // Variabel Elemen DOM
       let deferredPrompt;
+      const appContainer = document.getElementById('appContainer');
       const overlay = document.getElementById('overlay');
       const btnInstall = document.getElementById('btnInstall');
       const popupTitle = document.getElementById('popupTitle');
@@ -130,30 +132,33 @@
       const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
       const isInstalledFlag = localStorage.getItem('pwa_installed') === 'true';
 
-      // 3. Logika Pemblokir Cepat
-      if (isMobile && !isStandalone) {
-        // Jika HP dan BUKAN Aplikasi: Langsung tutup layar pakai overlay!
-        overlay.style.display = 'block';
-
-        if (isInstalledFlag) {
-          popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
-          popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
-          btnInstall.style.display = 'none';
-          resetLink.style.display = 'block'; 
+      // 3. Logika Mode Aplikasi Ketat
+      if (!isMobile) {
+        appContainer.style.display = 'block';
+      } else {
+        if (isStandalone) {
+          appContainer.style.display = 'block';
+          localStorage.setItem('pwa_installed', 'true');
         } else {
-          if (isIOS) {
-            popupTitle.innerHTML = 'Install Diperlukan';
-            popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
+          overlay.style.display = 'block';
+
+          if (isInstalledFlag) {
+            popupTitle.innerHTML = 'Aplikasi Telah Diunduh';
+            popupDesc.innerHTML = 'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi yang telah di unduh di layar utama HP Anda.';
             btnInstall.style.display = 'none';
+            resetLink.style.display = 'block'; 
           } else {
-            popupTitle.innerHTML = 'Install Diperlukan';
-            popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
-            btnInstall.style.display = 'block';
+            if (isIOS) {
+              popupTitle.innerHTML = 'Install Diperlukan';
+              popupDesc.innerHTML = 'Tekan ikon <b>Share (Bagikan)</b> di menu browser bawah, lalu pilih <b>"Add to Home Screen"</b> untuk menggunakan aplikasi.';
+              btnInstall.style.display = 'none';
+            } else {
+              popupTitle.innerHTML = 'Install Diperlukan';
+              popupDesc.innerHTML = 'Anda wajib menginstal aplikasi ini ke HP Anda untuk dapat menggunakannya.';
+              btnInstall.style.display = 'block';
+            }
           }
         }
-      } else if (isMobile && isStandalone) {
-        // Jika dibuka dari Aplikasi: Ingat status install
-        localStorage.setItem('pwa_installed', 'true');
       }
 
       // 4. Deteksi Otomatis Jika di Uninstall (KHUSUS ANDROID)
