@@ -31,6 +31,24 @@
         height: 100%; /* Tampilan normal, tidak di-crop */
         border: none;
       }
+
+      /* CSS Tambahan untuk Pop-up Install agar lebih rapi */
+      #installPopUp {
+        display: none; 
+        position: fixed; 
+        bottom: 20px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        background: #fff; 
+        padding: 15px 25px; 
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2); 
+        border-radius: 8px; 
+        z-index: 1000; 
+        text-align: center;
+        width: 80%;
+        max-width: 320px;
+        font-family: sans-serif;
+      }
     </style>
   </head>
   <body>
@@ -47,7 +65,15 @@
       </iframe>
     </div>
 
+    <div id="installPopUp">
+      <p style="margin: 0 0 5px 0; color: #2c3e50; font-weight: bold; font-size: 16px;">Install Rohis Ikhwah</p>
+      <p style="margin: 0 0 15px 0; color: #555; font-size: 13px;">Tambahkan ke layar utama untuk akses cepat seperti aplikasi!</p>
+      <button id="btnInstall" style="background: #2c3e50; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-weight: bold;">Install</button>
+      <button id="btnClose" style="background: transparent; border: 1px solid #ccc; padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-left: 5px; color: #555;">Nanti</button>
+    </div>
+
     <script>
+      // 1. Registrasi Service Worker
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
           navigator.serviceWorker.register('sw.js')
@@ -55,6 +81,52 @@
             .catch(err => console.log('PWA Error:', err));
         });
       }
+
+      // 2. Logika Pop-up Install PWA
+      let deferredPrompt;
+      const installPopUp = document.getElementById('installPopUp');
+      const btnInstall = document.getElementById('btnInstall');
+      const btnClose = document.getElementById('btnClose');
+
+      // Menangkap event sebelum prompt install muncul
+      window.addEventListener('beforeinstallprompt', (e) => {
+        // Cegah prompt bawaan browser muncul otomatis
+        e.preventDefault();
+        // Simpan event untuk dipicu nanti
+        deferredPrompt = e;
+        // Tampilkan pop-up custom kita
+        installPopUp.style.display = 'block';
+      });
+
+      // Aksi saat tombol "Install" diklik
+      btnInstall.addEventListener('click', async () => {
+        // Sembunyikan pop-up custom
+        installPopUp.style.display = 'none';
+        
+        if (deferredPrompt) {
+          // Tampilkan prompt bawaan sistem (dialog "Install app?")
+          deferredPrompt.prompt();
+          
+          // Tunggu respons user
+          const { outcome } = await deferredPrompt.userChoice;
+          console.log(`User memilih: ${outcome}`);
+          
+          // Kosongkan variabel
+          deferredPrompt = null;
+        }
+      });
+
+      // Aksi saat tombol "Nanti" diklik
+      btnClose.addEventListener('click', () => {
+        installPopUp.style.display = 'none';
+      });
+
+      // Deteksi jika aplikasi berhasil diinstal (misal via menu browser langsung)
+      window.addEventListener('appinstalled', () => {
+        console.log('PWA telah berhasil diinstal!');
+        installPopUp.style.display = 'none';
+        deferredPrompt = null;
+      });
     </script>
   </body>
 </html>
