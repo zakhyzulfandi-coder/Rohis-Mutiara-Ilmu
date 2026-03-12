@@ -1,8 +1,8 @@
-
 <!DOCTYPE html>
 <html lang="id">
 
 <head>
+
 <meta charset="UTF-8">
 
 <meta name="viewport"
@@ -10,11 +10,10 @@ content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable
 
 <title>Rohis Ikhwah</title>
 
+<link rel="manifest" href="manifest.json">
+
 <link rel="icon"
 href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
-
-<!-- PWA -->
-<link rel="manifest" href="manifest.json">
 
 <link rel="apple-touch-icon"
 href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
@@ -23,66 +22,91 @@ href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/m
 
 <style>
 
+/* RESET */
+
 html,body{
 margin:0;
 padding:0;
 width:100%;
 height:100%;
 overflow:hidden;
-background:#eee;
 font-family:sans-serif;
+background:#2c3e50;
 }
 
-/* iframe */
+/* SPLASH SCREEN */
 
-.iframe-container{
-width:100%;
-height:100vh;
-}
-
-iframe{
-width:100%;
-height:100%;
-border:none;
-}
-
-/* overlay */
-
-#overlay{
-display:none;
+#splash{
 position:fixed;
 top:0;
 left:0;
 width:100%;
 height:100%;
 background:#2c3e50;
-z-index:999;
+display:flex;
+flex-direction:column;
+justify-content:center;
+align-items:center;
+color:white;
+z-index:9999;
 }
 
-#popup{
-position:absolute;
-top:50%;
+#splash img{
+width:90px;
+margin-bottom:15px;
+}
+
+.loader{
+border:4px solid rgba(255,255,255,0.3);
+border-top:4px solid white;
+border-radius:50%;
+width:35px;
+height:35px;
+animation:spin 1s linear infinite;
+margin-top:20px;
+}
+
+@keyframes spin{
+0%{transform:rotate(0)}
+100%{transform:rotate(360deg)}
+}
+
+/* IFRAME */
+
+#app{
+display:none;
+width:100%;
+height:100vh;
+border:none;
+}
+
+/* INSTALL POPUP */
+
+#installBox{
+display:none;
+position:fixed;
+bottom:20px;
 left:50%;
-transform:translate(-50%,-50%);
-background:#fff;
-padding:25px;
-border-radius:12px;
+transform:translateX(-50%);
+background:white;
+padding:15px 20px;
+border-radius:10px;
+box-shadow:0 8px 20px rgba(0,0,0,0.3);
 width:85%;
 max-width:320px;
+z-index:999;
 text-align:center;
-box-shadow:0 10px 25px rgba(0,0,0,0.4);
 }
 
 #installBtn{
+margin-top:10px;
+padding:10px 15px;
 background:#2c3e50;
-color:#fff;
 border:none;
-padding:12px 20px;
+color:white;
 border-radius:6px;
 cursor:pointer;
-font-size:16px;
-margin-top:15px;
-width:100%;
+font-size:15px;
 }
 
 </style>
@@ -91,49 +115,57 @@ width:100%;
 
 <body>
 
-<div class="iframe-container">
+<!-- SPLASH -->
+
+<div id="splash">
+
+<img src="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
+
+<h2>Rohis Ikhwah</h2>
+
+<div class="loader"></div>
+
+</div>
+
+<!-- APP -->
 
 <iframe
-src="https://script.google.com/a/macros/mutiarailmu.sch.id/s/AKfycbzdTaJFJFNHH_sISxZDEk8nX0W9BAOqcKKYzfkNwY-aNvS-b3YKVed1d82vMGwABwatPg/exec"
-allow="camera; microphone; geolocation"
-></iframe>
+id="app"
+src="https://script.google.com/a/macros/mutiarailmu.sch.id/s/AKfycbzdTaJFJFNHH_sISxZDEk8nX0W9BAOqcKKYzfkNwY-aNvS-b3YKVed1d82vMGwABwatPg/exec">
+</iframe>
 
+<!-- INSTALL POPUP -->
+
+<div id="installBox">
+
+<div>
+Install aplikasi Rohis Ikhwah agar lebih mudah digunakan.
 </div>
-
-<!-- popup install -->
-
-<div id="overlay">
-
-<div id="popup">
-
-<h3>Aplikasi Rohis Ikhwah</h3>
-
-<p id="desc">
-Agar aplikasi dapat digunakan di HP,
-silakan install terlebih dahulu.
-</p>
 
 <button id="installBtn">
-Install Aplikasi
+Install Sekarang
 </button>
-
-</div>
 
 </div>
 
 <script>
 
+/* SPLASH CONTROL */
+
+setTimeout(()=>{
+
+document.getElementById("splash").style.display="none"
+document.getElementById("app").style.display="block"
+
+},2000)
+
 /* SERVICE WORKER */
 
 if("serviceWorker" in navigator){
 
-window.addEventListener("load",()=>{
-
 navigator.serviceWorker.register("/Rohis-Mutiara-Ilmu/sw.js")
 .then(()=>console.log("SW aktif"))
 .catch(err=>console.log(err))
-
-})
 
 }
 
@@ -141,7 +173,7 @@ navigator.serviceWorker.register("/Rohis-Mutiara-Ilmu/sw.js")
 
 let deferredPrompt
 
-const overlay=document.getElementById("overlay")
+const installBox=document.getElementById("installBox")
 const installBtn=document.getElementById("installBtn")
 
 window.addEventListener("beforeinstallprompt",(e)=>{
@@ -150,7 +182,7 @@ e.preventDefault()
 
 deferredPrompt=e
 
-overlay.style.display="block"
+installBox.style.display="block"
 
 })
 
@@ -167,7 +199,7 @@ const {outcome}=await deferredPrompt.userChoice
 
 if(outcome==="accepted"){
 
-overlay.style.display="none"
+installBox.style.display="none"
 
 }
 
@@ -177,15 +209,11 @@ deferredPrompt=null
 
 window.addEventListener("appinstalled",()=>{
 
-overlay.style.display="none"
+installBox.style.display="none"
 
-console.log("PWA terinstall")
+console.log("Aplikasi berhasil diinstall")
 
 })
-
-/* INTERAKSI USER */
-
-document.body.addEventListener("click",()=>{})
 
 </script>
 
