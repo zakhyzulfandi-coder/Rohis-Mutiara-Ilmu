@@ -1,8 +1,8 @@
 {
   "name": "Rohis Ikhwah",
   "short_name": "Rohis",
-  "start_url": ".",
-  "scope": ".",
+  "start_url": "/Rohis-Mutiara-Ilmu/",
+  "scope": "/Rohis-Mutiara-Ilmu/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#2c3e50",
@@ -16,12 +16,6 @@
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png"
-    },
-    {
-      "src": "icon-maskable.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }
