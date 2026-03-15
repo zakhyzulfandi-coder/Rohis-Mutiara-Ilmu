@@ -74,18 +74,18 @@
     }
 
     #btnInstall {
-      background: #558C3E;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-      margin-top: 15px;
-      width: 100%;
-    }
-
+  background: #558C3E;
+  color: #fff;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 15px;
+  width: 100%;
+  display: block; /* UBAH DARI display:none MENJADI display:block */
+}
     #resetLink {
       margin-top: 20px;
       font-size: 12px;
@@ -173,42 +173,32 @@
 
     /* ===== LOGIKA MODE APLIKASI ===== */
 
-    if (!isStandalone) {
-      // JIKA DIBUKA DI BROWSER (GITHUB/WEB BIASA)
-      
-      appContainer.style.display = 'none'; // Sembunyikan iframe
-      overlay.style.display = 'block';     // Tampilkan overlay paksaan
+    /* ===== LOGIKA MODE APLIKASI ===== */
 
-      if (isInstalledFlag) {
-        // Jika sudah ditandai terinstal tapi dibuka di browser
-        popupTitle.innerHTML = 'Aplikasi Telah Diinstal';
-        popupDesc.innerHTML =
-          'Akses melalui browser web tidak diizinkan. Silakan buka aplikasi Rohis Ikhwah yang telah diinstal di Desktop atau Home Screen HP Anda.';
-        
-        btnInstall.style.display = 'none';
-        resetLink.style.display = 'block';
-      } else {
-        // Jika belum terinstal
-        popupTitle.innerHTML = 'Install Diperlukan';
-        
-        if (isIOS) {
-          popupDesc.innerHTML =
-            'Untuk pengguna iOS: Tekan ikon <b>Share</b> di menu bawah browser lalu pilih <b>Add to Home Screen</b>.';
-          btnInstall.style.display = 'none'; // iOS tidak mendukung tombol install JS
-        } else {
-          popupDesc.innerHTML =
-            'Aplikasi ini wajib diinstal ke perangkat Anda (HP/Laptop) untuk dapat digunakan. Menunggu tombol instalasi...';
-          // Tombol akan dimunculkan oleh event 'beforeinstallprompt' di bawah
-        }
-      }
+if (!isStandalone) {
+  // JIKA DIBUKA DI BROWSER (GITHUB/WEB BIASA)
+        
+  appContainer.style.display = 'none'; // Sembunyikan iframe
+  overlay.style.display = 'block';     // Tampilkan overlay paksaan
 
-    } else {
-      // JIKA DIBUKA DI APLIKASI YANG SUDAH DIINSTAL (STANDALONE)
+  // Tampilkan pesan instalasi dasar
+  popupTitle.innerHTML = 'Install Diperlukan';
+  popupDesc.innerHTML =
+    'Aplikasi ini wajib diinstal ke perangkat Anda (HP/Laptop) untuk dapat digunakan. Klik tombol di bawah untuk menginstal.';
 
-      localStorage.setItem('pwa_installed', 'true');
-      overlay.style.display = 'none';       // Sembunyikan overlay
-      appContainer.style.display = 'block'; // Tampilkan iframe aplikasi
-    }
+  // Selalu tampilkan tombol instalasi
+  btnInstall.style.display = 'block';
+
+  // Hapus pengecekan isInstalledFlag dan isIOS di sini
+  // agar tombol selalu muncul.
+
+} else {
+  // JIKA DIBUKA DI APLIKASI YANG SUDAH DIINSTAL (STANDALONE)
+
+  localStorage.setItem('pwa_installed', 'true');
+  overlay.style.display = 'none';       // Sembunyikan overlay
+  appContainer.style.display = 'block'; // Tampilkan iframe aplikasi
+}
 
     /* ===== DETEKSI EVENT INSTALL (CHROME/ANDROID/DESKTOP) ===== */
 
