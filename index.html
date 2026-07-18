@@ -4,19 +4,34 @@
 <head>
   <meta charset="UTF-8">
 
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+  >
 
   <title>Aplikasi Rohis Mutiara Ilmu</title>
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
+
+  <link
+    rel="icon"
+    type="image/png"
+    href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg"
+  >
 
   <link rel="manifest" href="manifest.json">
-  <link rel="apple-touch-icon"
-        href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg">
+
+  <link
+    rel="apple-touch-icon"
+    href="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg"
+  >
+
   <meta name="theme-color" content="#558C3E">
 
   <style>
-    /* ===== LAYOUT DASAR ===== */
+    /* ===== RESET & LAYOUT DASAR ===== */
+
+    * {
+      box-sizing: border-box;
+    }
 
     html,
     body {
@@ -24,18 +39,21 @@
       padding: 0;
       width: 100%;
       height: 100%;
-      background-color: #eee;
+      background-color: #eeeeee;
       overflow: hidden;
       touch-action: manipulation;
+      font-family: Arial, Helvetica, sans-serif;
     }
 
     /* ===== CONTAINER APLIKASI ===== */
 
     .iframe-container {
+      display: block;
       width: 100%;
       height: 100vh;
+      height: 100dvh;
       overflow: hidden;
-      display: none; /* Disembunyikan secara default, hanya muncul jika diinstal */
+      background-color: #ffffff;
     }
 
     iframe {
@@ -43,64 +61,167 @@
       width: 100%;
       height: 100%;
       border: none;
+      background-color: #ffffff;
     }
 
-    /* ===== OVERLAY INSTALL ===== */
+    /* ===== TOMBOL INSTALL OPSIONAL ===== */
 
-    #overlay {
+    #installButtonFloating {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(44, 62, 80, 1);
-      z-index: 999;
+      right: 18px;
+      bottom: 18px;
+      z-index: 998;
+      align-items: center;
+      gap: 9px;
+      padding: 12px 17px;
+      border: none;
+      border-radius: 999px;
+      background: #558C3E;
+      color: #ffffff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.24);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
 
-    #installPopUp {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      padding: 30px 25px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border-radius: 12px;
+    #installButtonFloating:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    #installButtonFloating:active {
+      transform: scale(0.97);
+    }
+
+    #installButtonFloating svg {
+      width: 19px;
+      height: 19px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* ===== POPUP INSTALL OPSIONAL ===== */
+
+    #installOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      padding: 20px;
+      background: rgba(20, 28, 35, 0.56);
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(3px);
+    }
+
+    #installPopup {
+      position: relative;
+      width: 100%;
+      max-width: 360px;
+      padding: 28px 24px 23px;
+      border-radius: 18px;
+      background: #ffffff;
       text-align: center;
-      width: 80%;
-      max-width: 320px;
-      font-family: sans-serif;
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.3);
+      animation: popupMasuk 0.22s ease;
+    }
+
+    @keyframes popupMasuk {
+      from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.97);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    #closeInstallPopup {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 36px;
+      height: 36px;
+      border: none;
+      border-radius: 50%;
+      background: #f1f3f4;
+      color: #555555;
+      cursor: pointer;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    #installLogo {
+      width: 72px;
+      height: 72px;
+      margin-bottom: 14px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.16);
+    }
+
+    #popupTitle {
+      margin: 0 0 9px;
+      color: #355f27;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    #popupDesc {
+      margin: 0 0 19px;
+      color: #5f6368;
+      font-size: 14px;
+      line-height: 1.55;
     }
 
     #btnInstall {
-      background: #558C3E;
-      color: #fff;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-      font-size: 16px;
-      margin-top: 15px;
+      display: block;
       width: 100%;
-      /* PERBAIKAN: Tombol selalu standby (display: block) */
-      display: block; 
+      padding: 13px 20px;
+      border: none;
+      border-radius: 9px;
+      background: #558C3E;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 700;
     }
 
-    #resetLink {
-      margin-top: 20px;
-      font-size: 12px;
-      color: #3498db;
+    #btnInstall:active {
+      transform: scale(0.98);
+    }
+
+    #btnContinueBrowser {
+      display: block;
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px 20px;
+      border: 1px solid #d9ded6;
+      border-radius: 9px;
+      background: #ffffff;
+      color: #476c38;
       cursor: pointer;
-      text-decoration: underline;
-      display: none;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    @media (max-width: 480px) {
+      #installButtonFloating {
+        right: 12px;
+        bottom: 12px;
+        padding: 11px 15px;
+      }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- Aplikasi selalu dapat dibuka, baik dari browser maupun PWA -->
   <div class="iframe-container" id="appContainer">
     <iframe
       id="app"
@@ -109,181 +230,204 @@
       allowfullscreen
       webkitallowfullscreen
       mozallowfullscreen
-      allow="fullscreen; camera; microphone; display-capture; geolocation; gyroscope; accelerometer; magnetometer; microphone">
-    </iframe>
+      allow="fullscreen; camera; microphone; display-capture; geolocation; gyroscope; accelerometer; magnetometer"
+    ></iframe>
   </div>
 
-  <div id="overlay">
+  <!-- Tombol install hanya sebagai pilihan -->
+  <button id="installButtonFloating" type="button" aria-label="Install aplikasi">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M5 20h14v-2H5v2zm7-18v10.17l3.59-3.58L17 10l-5 5-5-5 1.41-1.41L11 12.17V2h1z"></path>
+    </svg>
+    Install Aplikasi
+  </button>
 
-    <div id="installPopUp">
+  <!-- Popup tidak menghalangi pengguna karena dapat ditutup -->
+  <div id="installOverlay" role="dialog" aria-modal="true" aria-labelledby="popupTitle">
+    <div id="installPopup">
+      <button id="closeInstallPopup" type="button" aria-label="Tutup">&times;</button>
 
-      <p id="popupTitle"
-         style="margin:0 0 10px 0;color:#558C3E;font-weight:bold;font-size:20px;">
-        Aplikasi Rohis Ikhwah
+      <img
+        id="installLogo"
+        src="https://raw.githubusercontent.com/zakhyzulfandi-coder/Rohis-Mutiara-Ilmu/main/logorohis.jpg"
+        alt="Logo Rohis Mutiara Ilmu"
+      >
+
+      <h2 id="popupTitle">Install Aplikasi</h2>
+
+      <p id="popupDesc">
+        Instalasi bersifat opsional. Anda tetap dapat menggunakan aplikasi langsung melalui browser.
       </p>
 
-      <p id="popupDesc"
-         style="margin:0 0 15px 0;color:#555;font-size:14px;line-height:1.5;">
-        Memuat sistem...
-      </p>
-
-      <button id="btnInstall">
-        Install
-      </button>
-
-      <p id="resetLink">
-        Saya sudah menghapus aplikasi (Install Ulang)
-      </p>
-
+      <button id="btnInstall" type="button">Install Sekarang</button>
+      <button id="btnContinueBrowser" type="button">Lanjutkan di Browser</button>
     </div>
   </div>
 
   <script>
-
     /* ===== SERVICE WORKER ===== */
 
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/Rohis-Mutiara-Ilmu/sw.js')
-          .catch(err => console.log('PWA Error:', err));
+      window.addEventListener('load', function () {
+        navigator.serviceWorker
+          .register('/Rohis-Mutiara-Ilmu/sw.js')
+          .catch(function (error) {
+            console.log('PWA Error:', error);
+          });
       });
     }
 
     /* ===== DOM ELEMENT ===== */
 
-    let deferredPrompt;
+    let deferredPrompt = null;
 
-    const appContainer = document.getElementById('appContainer');
-    const overlay = document.getElementById('overlay');
+    const installButtonFloating = document.getElementById('installButtonFloating');
+    const installOverlay = document.getElementById('installOverlay');
+    const closeInstallPopup = document.getElementById('closeInstallPopup');
     const btnInstall = document.getElementById('btnInstall');
+    const btnContinueBrowser = document.getElementById('btnContinueBrowser');
     const popupTitle = document.getElementById('popupTitle');
     const popupDesc = document.getElementById('popupDesc');
-    const resetLink = document.getElementById('resetLink');
 
-    /* ===== DETEKSI DEVICE & STANDALONE ===== */
+    /* ===== DETEKSI PERANGKAT ===== */
 
     const userAgent = navigator.userAgent || navigator.vendor || window.opera;
     const isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
 
-    // Deteksi apakah sedang berjalan di aplikasi yang sudah diinstal (PWA)
     const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true;
 
-    /* ===== LOGIKA MODE APLIKASI ===== */
+    /* ===== FUNGSI POPUP ===== */
 
-    if (!isStandalone) {
-      // JIKA DIBUKA DI BROWSER (GITHUB/WEB BIASA)
-            
-      appContainer.style.display = 'none'; // Sembunyikan iframe
-      overlay.style.display = 'block';     // Tampilkan overlay paksaan
-
-      // PERBAIKAN: Selalu tampilkan pesan instalasi dasar
-      popupTitle.innerHTML = 'Install Diperlukan';
-      popupDesc.innerHTML =
-        'Aplikasi ini wajib diinstal ke perangkat Anda (HP/Laptop) untuk dapat digunakan. Klik tombol di bawah untuk menginstal.';
-
-      // PERBAIKAN: Tombol selalu standby
-      btnInstall.style.display = 'block';
-
-      // Kita hapus pengecekan isInstalledFlag di sini agar tombol selalu muncul.
-      // Kita juga biarkan tombol muncul untuk iOS, meskipun tombol otomatisnya tidak berfungsi, 
-      // agar pengguna tahu aplikasi perlu diinstal.
-
-    } else {
-      // JIKA DIBUKA DI APLIKASI YANG SUDAH DIINSTAL (STANDALONE)
-
-      localStorage.setItem('pwa_installed', 'true');
-      overlay.style.display = 'none';       // Sembunyikan overlay
-      appContainer.style.display = 'block'; // Tampilkan iframe aplikasi
+    function bukaPopupInstall() {
+      installOverlay.style.display = 'flex';
     }
 
-    /* ===== DETEKSI EVENT INSTALL (CHROME/ANDROID/DESKTOP) ===== */
+    function tutupPopupInstall() {
+      installOverlay.style.display = 'none';
+    }
 
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-            
-      // PERBAIKAN: Jika prompt siap dan belum standalone
+    /* ===== MODE STANDALONE ===== */
+
+    if (isStandalone) {
+      installButtonFloating.style.display = 'none';
+      installOverlay.style.display = 'none';
+    }
+
+    /* ===== INSTALL CHROME / ANDROID / DESKTOP ===== */
+
+    window.addEventListener('beforeinstallprompt', function (event) {
+      event.preventDefault();
+      deferredPrompt = event;
+
       if (!isStandalone) {
-        // Tombol sudah standby karena CSS dan logika di atas, 
-        // kita tidak perlu menyembunyikan atau menampilkannya lagi di sini.
+        installButtonFloating.style.display = 'flex';
       }
     });
 
-    /* ===== TOMBOL INSTALL ===== */
+    /* ===== INSTALL IOS ===== */
 
-    btnInstall.addEventListener('click', async () => {
+    if (isIOS && !isStandalone) {
+      installButtonFloating.style.display = 'flex';
+    }
+
+    /* ===== EVENT TOMBOL ===== */
+
+    installButtonFloating.addEventListener('click', function () {
+      if (isIOS && !deferredPrompt) {
+        popupTitle.textContent = 'Install di iPhone / iPad';
+        popupDesc.innerHTML =
+          'Tekan tombol <strong>Bagikan</strong> pada Safari, lalu pilih <strong>Tambahkan ke Layar Utama</strong>. Instalasi tetap bersifat opsional.';
+        btnInstall.style.display = 'none';
+      } else {
+        popupTitle.textContent = 'Install Aplikasi';
+        popupDesc.textContent =
+          'Instalasi bersifat opsional. Anda tetap dapat menggunakan aplikasi langsung melalui browser.';
+        btnInstall.style.display = 'block';
+      }
+
+      bukaPopupInstall();
+    });
+
+    closeInstallPopup.addEventListener('click', tutupPopupInstall);
+    btnContinueBrowser.addEventListener('click', tutupPopupInstall);
+
+    installOverlay.addEventListener('click', function (event) {
+      if (event.target === installOverlay) {
+        tutupPopupInstall();
+      }
+    });
+
+    btnInstall.addEventListener('click', async function () {
       if (!deferredPrompt) {
-        // PERBAIKAN: Berikan pesan yang lebih informatif jika prompt belum siap
-        alert('Sistem instalasi sedang disiapkan atau browser tidak mendukung tombol otomatis. Gunakan menu Install di browser Anda.');
+        popupDesc.textContent =
+          'Browser belum menyediakan tombol instalasi otomatis. Anda tetap dapat menggunakan aplikasi melalui browser.';
         return;
       }
 
       deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
 
-      if (outcome === 'accepted') {
-        localStorage.setItem('pwa_installed', 'true');
-        popupTitle.innerHTML = 'Instalasi Berhasil';
-        popupDesc.innerHTML =
-          'Silakan tutup browser ini dan buka aplikasi Rohis Ikhwah dari layar utama / desktop Anda.';
+      const pilihan = await deferredPrompt.userChoice;
+
+      if (pilihan.outcome === 'accepted') {
+        popupTitle.textContent = 'Instalasi Diproses';
+        popupDesc.textContent =
+          'Aplikasi sedang ditambahkan ke perangkat Anda. Anda juga tetap dapat menggunakan versi browser.';
         btnInstall.style.display = 'none';
       }
+
       deferredPrompt = null;
     });
 
-    /* ===== RESET INSTALL ===== */
+    /* ===== SETELAH BERHASIL DIINSTAL ===== */
 
-    resetLink.addEventListener('click', () => {
-      localStorage.removeItem('pwa_installed');
-      location.reload();
+    window.addEventListener('appinstalled', function () {
+      installButtonFloating.style.display = 'none';
+      installOverlay.style.display = 'none';
+      deferredPrompt = null;
     });
 
-    /* ===== DETEKSI SELESAI INSTALL ===== */
+    /* ===== ANTI ZOOM ===== */
 
-    window.addEventListener('appinstalled', () => {
-      localStorage.setItem('pwa_installed', 'true');
-      if (!isStandalone) {
-        popupTitle.innerHTML = 'Instalasi Selesai';
-        popupDesc.innerHTML =
-          'Silakan tutup browser ini dan buka aplikasi Rohis Ikhwah dari layar utama / desktop Anda.';
-        btnInstall.style.display = 'none';
+    document.addEventListener(
+      'wheel',
+      function (event) {
+        if (event.ctrlKey) {
+          event.preventDefault();
+        }
+      },
+      { passive: false }
+    );
+
+    document.addEventListener('keydown', function (event) {
+      if (
+        event.ctrlKey &&
+        ['+', '-', '=', '0'].includes(event.key)
+      ) {
+        event.preventDefault();
       }
     });
 
-    /* ===== ANTI ZOOM & SCROLLING (TETAP DIPERTAHANKAN) ===== */
-
-    document.addEventListener('wheel', function (e) {
-      if (e.ctrlKey) {
-        e.preventDefault();
-      }
-    }, { passive: false });
-
-    document.addEventListener('keydown', function (e) {
-      if (e.ctrlKey && (
-        e.key === '+' ||
-        e.key === '-' ||
-        e.key === '=' ||
-        e.key === '0'
-      )) {
-        e.preventDefault();
-      }
-    });
-
-    document.addEventListener('gesturestart', function (e) {
-      e.preventDefault();
+    document.addEventListener('gesturestart', function (event) {
+      event.preventDefault();
     });
 
     let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-      const now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
 
+    document.addEventListener(
+      'touchend',
+      function (event) {
+        const now = Date.now();
+
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+
+        lastTouchEnd = now;
+      },
+      false
+    );
   </script>
 
 </body>
